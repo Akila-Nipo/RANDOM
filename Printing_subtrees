@@ -1,0 +1,112 @@
+
+//link:https://www.geeksforgeeks.org/queries-for-dfs-of-a-subtree-in-a-tree/?ref=rp
+#include <bits/stdc++.h>
+using namespace std;
+const int N = 100000;
+
+// Adjacency list to store the
+// tree nodes connection
+vector<int> v[N];
+
+// stores the index of node in DFS
+unordered_map<int, int> mp;
+
+// stores the index of node in
+// original node
+vector<int> a;
+
+// Function to call DFS and count nodes
+// under that subtree
+void dfs(int under[], int child, int parent)
+{
+
+    // stores the DFS of tree
+    a.push_back(child);
+
+    // height of subtree
+    under[child] = 1;
+
+    // iterate for children
+    for (auto it : v[child]) {
+
+        // if not equal to parent
+        // so that it does not traverse back
+        if (it != parent) {
+
+            // call DFS for subtree
+            dfs(under, it, child);
+
+            // add the height
+            under[child] += under[it];
+        }
+    }
+}
+
+// Function to print the DFS of subtree of node
+void printDFSofSubtree(int node, int under[])
+{
+    // index of node in the original DFS
+    int ind = mp[node];
+
+    // height of subtree of node
+    int height = under[node];
+
+    cout << "The DFS of subtree " << node << ": ";
+
+    // print the DFS of subtree
+    for (int i = ind; i < ind + under[node]; i++) {
+        cout << a[i] << " ";
+    }
+    cout << endl;
+}
+
+// Function to add edges to a tree
+
+// Marks the index of node in original DFS
+void markIndexDfs()
+{
+    int size = a.size();
+
+    // marks the index
+    for (int i = 0; i < size; i++) {
+        mp[a[i]] = i;
+    }
+}
+
+// Driver Code
+int main()
+{
+    int n;
+    cin>>n;
+
+    // add edges of a tree
+    for(int i=2;i<=n;i++)
+    {
+        int c;
+        cin>>c;
+        v[c].push_back(i);
+        v[i].push_back(c);
+    }
+
+
+    // array to store the height of subtree
+    // of every node in a tree
+    int under[n + 1];
+
+    // Call the function DFS to generate the DFS
+    dfs(under, 1, 0);
+
+    // Function call to mark the index of node
+    markIndexDfs();
+
+    // Query 1
+    for(int i=1;i<=n;i++)
+    {
+        printDFSofSubtree(i, under);
+    }
+
+
+
+
+    return 0;
+}
